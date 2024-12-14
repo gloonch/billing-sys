@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 )
 
 type DBConfig struct {
@@ -15,8 +16,8 @@ type DBConfig struct {
 }
 
 func NewDB(cfg DBConfig) (*sql.DB, error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s",
-		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.SSLMode)
+	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode)
 
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {

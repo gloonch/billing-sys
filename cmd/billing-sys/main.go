@@ -15,7 +15,7 @@ func main() {
 		Host:     "localhost",
 		Port:     5432,
 		Username: "postgres",
-		Password: "1234",
+		Password: "password",
 		DBName:   "billingsys",
 		SSLMode:  "disable",
 	}
