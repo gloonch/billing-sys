@@ -34,14 +34,29 @@ func main() {
 	buildingRepo := repository.NewPgBuildingRepository(db)
 
 	// get use cases
-	calculateChargeUC := &usecases.CalculateChargeUseCase{
+	createBuildingUC := &usecases.CreateBuildingUseCase{
 		BuildingRepo: buildingRepo,
-		UnitRepo:     nil,
+	}
+	getBuildingUC := &usecases.GetBuildingUseCase{
+		BuildingRepo: buildingRepo,
+	}
+	updateBuildingUC := &usecases.UpdateBuildingUseCase{
+		BuildingRepo: buildingRepo,
+	}
+	listBuildingUC := &usecases.ListAllBuildingUseCase{
+		BuildingRepo: buildingRepo,
+	}
+	deleteBuildingUC := &usecases.DeleteBuildingUseCase{
+		BuildingRepo: buildingRepo,
 	}
 
 	// handlers
 	handlers := &mHttp.Handlers{
-		calculateChargeUC,
+		CreateBuildingUC: createBuildingUC,
+		GetBuildingUC:    getBuildingUC,
+		ListBuildingsUC:  listBuildingUC,
+		UpdateBuildingUC: updateBuildingUC,
+		DeleteBuildingUC: deleteBuildingUC,
 	}
 
 	// config router
