@@ -3,9 +3,9 @@ package domain
 import "billing-sys/internal/domain/entities"
 
 type BuildingRepository interface {
-	GetByID(id uint) (*entities.Building, error)
-	Save(building *entities.Building) error
-	GetAll() ([]entities.Building, error)
+	GetByID(id uint) (*entities.Buildings, error)
+	Save(building *entities.Buildings) error
+	GetAll() ([]entities.Buildings, error)
 	DeleteByID(id uint) error
 }
 

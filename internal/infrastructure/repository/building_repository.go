@@ -15,16 +15,16 @@ func NewPgBuildingRepository(db *sql.DB) domain.BuildingRepository {
 	return &PgBuildingRepository{db: db}
 }
 
-func (r *PgBuildingRepository) GetAll() ([]entities.Building, error) {
-	rows, err := r.db.Query("SELECT * FROM buildings")
+func (r *PgBuildingRepository) GetAll() ([]entities.Buildings, error) {
+	rows, err := r.db.Query("SELECT id, name, address, total_units, total_area FROM buildings")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var buildings []entities.Building
+	var buildings []entities.Buildings
 	for rows.Next() {
-		var b entities.Building
+		var b entities.Buildings
 		if err := rows.Scan(&b.ID, &b.Name, &b.Address, &b.TotalUnits, &b.TotalArea); err != nil {
 			return nil, err
 		}
@@ -37,8 +37,8 @@ func (r *PgBuildingRepository) GetAll() ([]entities.Building, error) {
 	return buildings, nil
 }
 
-func (r *PgBuildingRepository) GetByID(id uint) (*entities.Building, error) {
-	var b entities.Building
+func (r *PgBuildingRepository) GetByID(id uint) (*entities.Buildings, error) {
+	var b entities.Buildings
 
 	row := r.db.QueryRow("SELECT id, name, address, total_units, total_area FROM buildings WHERE id = $1", id)
 	err := row.Scan(&b.ID, &b.Name, &b.Address, &b.TotalUnits, &b.TotalArea)
@@ -53,7 +53,7 @@ func (r *PgBuildingRepository) GetByID(id uint) (*entities.Building, error) {
 	return &b, nil
 }
 
-func (r *PgBuildingRepository) Save(b *entities.Building) error {
+func (r *PgBuildingRepository) Save(b *entities.Buildings) error {
 
 	// if b.ID == 0 it is an insert
 	if b.ID == 0 {

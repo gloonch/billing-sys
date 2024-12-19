@@ -11,7 +11,7 @@ type CreateBuildingUseCase struct {
 }
 
 func (c *CreateBuildingUseCase) Execute(input dto.CreateBuildingInput) (*dto.CreateBuildingOutput, error) {
-	building := &entities.Building{
+	building := &entities.Buildings{
 		Name:       input.Name,
 		Address:    input.Address,
 		TotalUnits: input.TotalUnits,
