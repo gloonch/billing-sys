@@ -1,0 +1,34 @@
+GET http://localhost:8000/units
+
+###
+GET http://localhost:8000/units/8
+
+
+###
+POST http://localhost:8000/units
+Content-Type: application/json
+
+{
+  "UnitNumber":"9",
+  "OccupantsCount":22,
+  "Area":900.0,
+  "BuildingID":2
+}
+
+
+###
+DELETE http://localhost:8000/units/8
+
+
+###
+PUT http://localhost:8000/units/10
+Content-Type: application/json
+
+{
+  "UnitNumber":"444",
+  "OccupantsCount":111,
+  "Area":11.2,
+  "BuildingID":2
+}
+
+

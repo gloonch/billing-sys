@@ -16,7 +16,7 @@ func NewPgUnitRepository(db *sql.DB) domain.UnitRepository {
 }
 
 func (r *PgUnitRepository) GetAll() ([]entities.Unit, error) {
-	rows, err := r.db.Query("SELECT * FROM unit")
+	rows, err := r.db.Query("SELECT * FROM units")
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (r *PgUnitRepository) GetAll() ([]entities.Unit, error) {
 	var units []entities.Unit
 	for rows.Next() {
 		var u entities.Unit
-		if err := rows.Scan(&u.ID, &u.BuildingID, &u.UnitNumber, &u.Floor, &u.Area, &u.OccupantCount); err != nil {
+		if err := rows.Scan(&u.ID, &u.BuildingID, &u.UnitNumber, &u.Area, &u.OccupantsCount); err != nil {
 			return nil, err
 		}
 		units = append(units, u)
@@ -40,9 +40,8 @@ func (r *PgUnitRepository) GetAll() ([]entities.Unit, error) {
 func (r *PgUnitRepository) GetByID(id uint) (*entities.Unit, error) {
 	var u entities.Unit
 
-	// TODO: fix this to
-	row := r.db.QueryRow(`SELECT id, unit_number, floor, area, occupant_count FROM units WHERE id = $1`, id)
-	err := row.Scan(&u.ID, &u.UnitNumber, &u.Floor, &u.Area, &u.OccupantCount)
+	row := r.db.QueryRow(`SELECT id, unit_number, area, occupants_count FROM units WHERE id = $1`, id)
+	err := row.Scan(&u.ID, &u.UnitNumber, &u.Area, &u.OccupantsCount)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +57,12 @@ func (r *PgUnitRepository) Save(u *entities.Unit) error {
 
 	// if u.ID == 0 it is an insert
 	if u.ID == 0 {
-		err := r.db.QueryRow("INSERT INTO units (unit_number, floor, area, occupant_count) VALUES ($1, $2, $3, $4) RETURNING id",
-			u.UnitNumber, u.Floor, u.Area, u.OccupantCount).Scan(&u.ID)
+		err := r.db.QueryRow("INSERT INTO units (unit_number, area, occupants_count, building_id) VALUES ($1, $2, $3, $4) RETURNING id",
+			u.UnitNumber, u.Area, u.OccupantsCount, u.BuildingID).Scan(&u.ID)
 		return err
 	} else {
-		_, err := r.db.Exec("UPDATE units SET unit_number=$1, unit_number=$2, unit_number=$3, unit_number=$4, ",
-			u.UnitNumber, u.Floor, u.Area, u.OccupantCount, u.ID)
+		_, err := r.db.Exec("UPDATE units SET unit_number=$1, area=$2, occupants_count=$3 WHERE id=$4",
+			u.UnitNumber, u.Area, u.OccupantsCount, u.ID)
 		return err
 	}
 }

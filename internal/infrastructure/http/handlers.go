@@ -2,19 +2,28 @@ package http
 
 import (
 	"billing-sys/internal/application/dto"
-	"billing-sys/internal/application/usecases"
+	"billing-sys/internal/application/usecases/buildings"
+	"billing-sys/internal/application/usecases/units"
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Handlers struct {
 	// Use cases here
-	CreateBuildingUC *usecases.CreateBuildingUseCase
-	GetBuildingUC    *usecases.GetBuildingUseCase
-	ListBuildingsUC  *usecases.ListAllBuildingUseCase
-	UpdateBuildingUC *usecases.UpdateBuildingUseCase
-	DeleteBuildingUC *usecases.DeleteBuildingUseCase
+	CreateBuildingUC *buildings.CreateBuildingUseCase
+	GetBuildingUC    *buildings.GetBuildingUseCase
+	ListBuildingsUC  *buildings.ListAllBuildingUseCase
+	UpdateBuildingUC *buildings.UpdateBuildingUseCase
+	DeleteBuildingUC *buildings.DeleteBuildingUseCase
+
+	// Unit use cases
+	CreateUnitUC *units.CreateUnitUseCase
+	GetUnitUC    *units.GetUnitUseCase
+	ListUnitsUC  *units.ListAllUnitUseCase
+	UpdateUnitUC *units.UpdateUnitUseCase
+	DeleteUnitUC *units.DeleteUnitUseCase
 }
 
 func (h *Handlers) CreateBuildingHandler(w http.ResponseWriter, r *http.Request) {
@@ -145,5 +154,159 @@ func (h *Handlers) DeleteBuildingHandler(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Building deleted successfully",
+	})
+}
+
+// unit handlers TODO: should i separate these handlers into EntityHandler ?
+
+func (h *Handlers) CreateUnitHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	var input dto.CreateUnitInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+
+		return
+	}
+
+	result, err := h.CreateUnitUC.Execute(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+
+}
+
+func (h *Handlers) GetUnitHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "units" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
+	}
+
+	result, err := h.GetUnitUC.Execute(uint(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handlers) ListUnitHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	result, err := h.ListUnitsUC.Execute()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handlers) UpdateUnitHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != http.MethodPut {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "units" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+
+		return
+	}
+
+	var input dto.CreateUnitInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+
+		return
+	}
+
+	result, err := h.UpdateUnitUC.Execute(uint(id), input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handlers) DeleteUnitHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "units" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.DeleteUnitUC.Execute(uint(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Unit deleted successfully",
 	})
 }

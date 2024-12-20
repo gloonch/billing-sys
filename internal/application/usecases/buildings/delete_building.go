@@ -1,4 +1,4 @@
-package usecases
+package buildings
 
 import (
 	"billing-sys/internal/domain"

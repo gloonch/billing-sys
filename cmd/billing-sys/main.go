@@ -1,7 +1,8 @@
 package main
 
 import (
-	"billing-sys/internal/application/usecases"
+	"billing-sys/internal/application/usecases/buildings"
+	"billing-sys/internal/application/usecases/units"
 	"billing-sys/internal/infrastructure/database"
 	mHttp "billing-sys/internal/infrastructure/http"
 	"billing-sys/internal/infrastructure/repository"
@@ -32,22 +33,40 @@ func main() {
 
 	// get repository
 	buildingRepo := repository.NewPgBuildingRepository(db)
+	unitRepo := repository.NewPgUnitRepository(db)
 
-	// get use cases
-	createBuildingUC := &usecases.CreateBuildingUseCase{
+	// get buildings use cases
+	createBuildingUC := &buildings.CreateBuildingUseCase{
 		BuildingRepo: buildingRepo,
 	}
-	getBuildingUC := &usecases.GetBuildingUseCase{
+	getBuildingUC := &buildings.GetBuildingUseCase{
 		BuildingRepo: buildingRepo,
 	}
-	updateBuildingUC := &usecases.UpdateBuildingUseCase{
+	updateBuildingUC := &buildings.UpdateBuildingUseCase{
 		BuildingRepo: buildingRepo,
 	}
-	listBuildingUC := &usecases.ListAllBuildingUseCase{
+	listBuildingUC := &buildings.ListAllBuildingUseCase{
 		BuildingRepo: buildingRepo,
 	}
-	deleteBuildingUC := &usecases.DeleteBuildingUseCase{
+	deleteBuildingUC := &buildings.DeleteBuildingUseCase{
 		BuildingRepo: buildingRepo,
+	}
+
+	// get unit use cases
+	createUnitUC := &units.CreateUnitUseCase{
+		UnitRepo: unitRepo,
+	}
+	getUnitUC := &units.GetUnitUseCase{
+		UnitRepo: unitRepo,
+	}
+	listUnitUC := &units.ListAllUnitUseCase{
+		UnitRepo: unitRepo,
+	}
+	updateUnitUC := &units.UpdateUnitUseCase{
+		UnitRepo: unitRepo,
+	}
+	deleteUnitUC := &units.DeleteUnitUseCase{
+		UnitRepo: unitRepo,
 	}
 
 	// handlers
@@ -57,6 +76,12 @@ func main() {
 		ListBuildingsUC:  listBuildingUC,
 		UpdateBuildingUC: updateBuildingUC,
 		DeleteBuildingUC: deleteBuildingUC,
+
+		CreateUnitUC: createUnitUC,
+		GetUnitUC:    getUnitUC,
+		ListUnitsUC:  listUnitUC,
+		UpdateUnitUC: updateUnitUC,
+		DeleteUnitUC: deleteUnitUC,
 	}
 
 	// config router
