@@ -60,7 +60,15 @@ func (h *Handlers) GetBuildingHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idStr := r.URL.Query().Get("id")
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "buildings" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
@@ -106,7 +114,15 @@ func (h *Handlers) UpdateBuildingHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	idStr := r.URL.Query().Get("id")
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "buildings" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)
@@ -138,7 +154,15 @@ func (h *Handlers) DeleteBuildingHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	idStr := r.URL.Query().Get("id")
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "buildings" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)

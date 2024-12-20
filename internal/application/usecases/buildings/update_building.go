@@ -21,6 +21,7 @@ func (c *UpdateBuildingUseCase) Execute(id uint, input dto.UpdateBuildingInput) 
 		return nil, errors.New("building not found")
 	}
 
+	building.ID = input.ID
 	building.Name = input.Name
 	building.Address = input.Address
 	building.TotalUnits = input.TotalUnits

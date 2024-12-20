@@ -1,6 +1,7 @@
 package dto
 
 type UpdateBuildingInput struct {
+	ID         uint
 	Name       string
 	Address    string
 	TotalUnits int

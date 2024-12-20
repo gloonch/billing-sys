@@ -63,7 +63,7 @@ func (r *PgBuildingRepository) Save(b *entities.Buildings) error {
 		return err
 	} else {
 		_, err := r.db.Exec(
-			"UPDATE buildings SET name=$1, address=$2, total_units=$3, total_area=$4, WHERE id=$5, ",
+			"UPDATE buildings SET name=$1, address=$2, total_units=$3, total_area=$4 WHERE id=$5 ",
 			b.Name, b.Address, b.TotalUnits, b.TotalArea, b.ID)
 		return err
 	}

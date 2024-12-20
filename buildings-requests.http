@@ -1,0 +1,32 @@
+GET http://localhost:8000/list_buildings
+
+###
+GET http://localhost:8000/buildings/3
+
+###
+POST http://localhost:8000/buildings
+Content-Type: application/json
+
+{
+  "Name":"Persian Gulf",
+  "Address":"Tehran - Shariati Street",
+  "TotalUnits":20,
+  "TotalArea":200.0
+}
+
+
+###
+DELETE http://localhost:8000/buildings/3
+
+
+###
+PUT http://localhost:8000/buildings/2
+Content-Type: application/json
+
+{
+  "ID": 22,
+  "Name":"Sepid",
+  "Address":"Tehran - Hafez Street",
+  "TotalUnits":20,
+  "TotalArea":110.0
+}
