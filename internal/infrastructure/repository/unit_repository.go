@@ -16,7 +16,8 @@ func NewPgUnitRepository(db *sql.DB) domain.UnitRepository {
 }
 
 func (r *PgUnitRepository) GetAll() ([]entities.Unit, error) {
-	rows, err := r.db.Query("SELECT * FROM units")
+	// if not specified, BuildingID will get wrong value through the Scan method
+	rows, err := r.db.Query("SELECT id, building_id, unit_number, area, occupants_count FROM units")
 	if err != nil {
 		return nil, err
 	}

@@ -12,11 +12,12 @@ import (
 
 type Handlers struct {
 	// Use cases here
-	CreateBuildingUC *buildings.CreateBuildingUseCase
-	GetBuildingUC    *buildings.GetBuildingUseCase
-	ListBuildingsUC  *buildings.ListAllBuildingUseCase
-	UpdateBuildingUC *buildings.UpdateBuildingUseCase
-	DeleteBuildingUC *buildings.DeleteBuildingUseCase
+	CreateBuildingUC          *buildings.CreateBuildingUseCase
+	GetBuildingUC             *buildings.GetBuildingUseCase
+	ListBuildingsUC           *buildings.ListAllBuildingUseCase
+	UpdateBuildingUC          *buildings.UpdateBuildingUseCase
+	DeleteBuildingUC          *buildings.DeleteBuildingUseCase
+	CalculateBuildingChargeUC *buildings.CalculateBuildingChargeUseCase
 
 	// Unit use cases
 	CreateUnitUC *units.CreateUnitUseCase
@@ -179,6 +180,37 @@ func (h *Handlers) DeleteBuildingHandler(w http.ResponseWriter, r *http.Request)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message": "Building deleted successfully",
 	})
+}
+
+func (h *Handlers) CalculateBuildingChargeHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "buildings" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	buildingID, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	charges, err := h.CalculateBuildingChargeUC.Execute(uint(buildingID))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(charges)
 }
 
 // unit handlers TODO: should i separate these handlers into EntityHandler ?

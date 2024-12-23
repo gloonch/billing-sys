@@ -7,6 +7,7 @@ type BuildingRepository interface {
 	Save(building *entities.Buildings) error
 	GetAll() ([]entities.Buildings, error)
 	DeleteByID(id uint) error
+	GetByBuildingID(buildingID uint) ([]entities.Unit, error)
 }
 
 type UnitRepository interface {

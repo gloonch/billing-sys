@@ -1,10 +1,11 @@
 package services
 
-import "billing-sys/internal/domain/entities"
-
-type BillingService struct {
+type ChargeCalculator struct {
+	PerOccupantCharge float64
 }
 
-func (s *BillingService) CalculateCharge(b entities.Buildings, u entities.Unit) (float64, error) {
-	return 0, nil
+func (c *ChargeCalculator) Calculate(unitArea, totalArea, baseCharge float64, occupantsCount int, sharedExpenses float64) float64 {
+	unitCharge := (unitArea / totalArea) * baseCharge
+	extraCharge := float64(occupantsCount) * c.PerOccupantCharge
+	return unitCharge + extraCharge + sharedExpenses
 }

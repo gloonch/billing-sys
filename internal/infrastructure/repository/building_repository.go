@@ -86,3 +86,33 @@ func (r *PgBuildingRepository) DeleteByID(id uint) error {
 
 	return nil
 }
+
+func (r *PgBuildingRepository) GetByBuildingID(buildingID uint) ([]entities.Unit, error) {
+	// fetch units by building ID
+	query := `SELECT id, unit_number, occupants_count, area, building_id FROM units WHERE building_id = $1`
+
+	rows, err := r.db.Query(query, buildingID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Initialize slice to store units
+	var units []entities.Unit
+
+	// Iterate through the rows
+	for rows.Next() {
+		var unit entities.Unit
+		err := rows.Scan(&unit.ID, &unit.UnitNumber, &unit.OccupantsCount, &unit.Area, &unit.BuildingID)
+		if err != nil {
+			return nil, err
+		}
+		units = append(units, unit)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return units, nil
+}

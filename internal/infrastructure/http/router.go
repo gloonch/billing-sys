@@ -13,6 +13,7 @@ func NewRouter(handlers *Handlers) http.Handler {
 	r.HandleFunc("GET /list_buildings", handlers.ListBuildingHandler)
 	r.HandleFunc("PUT /buildings/{id}", handlers.UpdateBuildingHandler)
 	r.HandleFunc("DELETE /buildings/{id}", handlers.DeleteBuildingHandler)
+	r.HandleFunc("GET /buildings/{id}/charges", handlers.CalculateBuildingChargeHandler)
 
 	r.HandleFunc("POST /units", handlers.CreateUnitHandler)
 	r.HandleFunc("GET /units/{id}", handlers.GetUnitHandler)

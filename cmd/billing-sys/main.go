@@ -3,6 +3,7 @@ package main
 import (
 	"billing-sys/internal/application/usecases/buildings"
 	"billing-sys/internal/application/usecases/units"
+	"billing-sys/internal/domain/services"
 	"billing-sys/internal/infrastructure/database"
 	mHttp "billing-sys/internal/infrastructure/http"
 	"billing-sys/internal/infrastructure/repository"
@@ -34,6 +35,7 @@ func main() {
 	// get repository
 	buildingRepo := repository.NewPgBuildingRepository(db)
 	unitRepo := repository.NewPgUnitRepository(db)
+	chargeCalculator := services.ChargeCalculator{}
 
 	// get buildings use cases
 	createBuildingUC := &buildings.CreateBuildingUseCase{
@@ -50,6 +52,11 @@ func main() {
 	}
 	deleteBuildingUC := &buildings.DeleteBuildingUseCase{
 		BuildingRepo: buildingRepo,
+	}
+	calculateBuildingChargeUC := &buildings.CalculateBuildingChargeUseCase{
+		UnitRepo:         unitRepo,
+		BuildingRepo:     buildingRepo,
+		ChargeCalculator: &chargeCalculator,
 	}
 
 	// get unit use cases
@@ -82,6 +89,8 @@ func main() {
 		ListUnitsUC:  listUnitUC,
 		UpdateUnitUC: updateUnitUC,
 		DeleteUnitUC: deleteUnitUC,
+
+		CalculateBuildingChargeUC: calculateBuildingChargeUC,
 	}
 
 	// config router
