@@ -21,5 +21,9 @@ func NewRouter(handlers *Handlers) http.Handler {
 	r.HandleFunc("PUT /units/{id}", handlers.UpdateUnitHandler)
 	r.HandleFunc("DELETE /units/{id}", handlers.DeleteUnitHandler)
 
+	r.HandleFunc("POST /payments", handlers.CreatePaymentHandler)                    // POST
+	r.HandleFunc("GET /payments/unit/{unit_id}", handlers.ListPaymentsByUnitHandler) // GET
+	r.HandleFunc("DELETE /payments/{id}", handlers.DeletePaymentHandler)             // DELETE
+
 	return r
 }

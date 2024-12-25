@@ -3,6 +3,7 @@ package http
 import (
 	"billing-sys/internal/application/dto"
 	"billing-sys/internal/application/usecases/buildings"
+	"billing-sys/internal/application/usecases/payments"
 	"billing-sys/internal/application/usecases/units"
 	"encoding/json"
 	"net/http"
@@ -25,6 +26,11 @@ type Handlers struct {
 	ListUnitsUC  *units.ListAllUnitUseCase
 	UpdateUnitUC *units.UpdateUnitUseCase
 	DeleteUnitUC *units.DeleteUnitUseCase
+
+	// Payment use cases
+	CreatePaymentUC        *payments.CreatePaymentUseCase
+	DeletePaymentUC        *payments.DeletePaymentUseCase
+	ListPaymentsByUnitIDUC *payments.ListPaymentsByUnitIDUseCase
 }
 
 func (h *Handlers) CreateBuildingHandler(w http.ResponseWriter, r *http.Request) {
@@ -356,6 +362,92 @@ func (h *Handlers) DeleteUnitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.DeleteUnitUC.Execute(uint(id))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Unit deleted successfully",
+	})
+}
+
+// payment handlers
+
+func (h *Handlers) CreatePaymentHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var input dto.CreatePaymentInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Invalid Input", http.StatusBadRequest)
+		return
+	}
+
+	result, err := h.CreatePaymentUC.Execute(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handlers) ListPaymentsByUnitHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "payments" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	unitID, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	results, err := h.ListPaymentsByUnitIDUC.Execute(uint(unitID))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(results)
+}
+
+func (h *Handlers) DeletePaymentHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	path := r.URL.Path
+	segments := strings.Split(path, "/")
+
+	if len(segments) < 3 || segments[1] != "payments" {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	idStr := segments[2]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.DeletePaymentUC.Execute(uint(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

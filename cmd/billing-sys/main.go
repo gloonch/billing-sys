@@ -2,6 +2,7 @@ package main
 
 import (
 	"billing-sys/internal/application/usecases/buildings"
+	"billing-sys/internal/application/usecases/payments"
 	"billing-sys/internal/application/usecases/units"
 	"billing-sys/internal/domain/services"
 	"billing-sys/internal/infrastructure/database"
@@ -17,7 +18,7 @@ func main() {
 		Host:     "localhost",
 		Port:     5432,
 		Username: "postgres",
-		Password: "password",
+		Password: "1234",
 		DBName:   "billingsys",
 		SSLMode:  "disable",
 	}
@@ -35,6 +36,7 @@ func main() {
 	// get repository
 	buildingRepo := repository.NewPgBuildingRepository(db)
 	unitRepo := repository.NewPgUnitRepository(db)
+	paymentRepo := repository.NewPgPaymentRepository(db)
 	chargeCalculator := services.ChargeCalculator{}
 
 	// get buildings use cases
@@ -76,13 +78,25 @@ func main() {
 		UnitRepo: unitRepo,
 	}
 
+	// get unit use cases
+	createPaymentUC := &payments.CreatePaymentUseCase{
+		PaymentRepo: paymentRepo,
+	}
+	deletePaymentUC := &payments.DeletePaymentUseCase{
+		PaymentRepo: paymentRepo,
+	}
+	listPaymentsByUnitIDUC := &payments.ListPaymentsByUnitIDUseCase{
+		PaymentRepo: paymentRepo,
+	}
+
 	// handlers
 	handlers := &mHttp.Handlers{
-		CreateBuildingUC: createBuildingUC,
-		GetBuildingUC:    getBuildingUC,
-		ListBuildingsUC:  listBuildingUC,
-		UpdateBuildingUC: updateBuildingUC,
-		DeleteBuildingUC: deleteBuildingUC,
+		CreateBuildingUC:          createBuildingUC,
+		GetBuildingUC:             getBuildingUC,
+		ListBuildingsUC:           listBuildingUC,
+		UpdateBuildingUC:          updateBuildingUC,
+		DeleteBuildingUC:          deleteBuildingUC,
+		CalculateBuildingChargeUC: calculateBuildingChargeUC,
 
 		CreateUnitUC: createUnitUC,
 		GetUnitUC:    getUnitUC,
@@ -90,7 +104,9 @@ func main() {
 		UpdateUnitUC: updateUnitUC,
 		DeleteUnitUC: deleteUnitUC,
 
-		CalculateBuildingChargeUC: calculateBuildingChargeUC,
+		CreatePaymentUC:        createPaymentUC,
+		DeletePaymentUC:        deletePaymentUC,
+		ListPaymentsByUnitIDUC: listPaymentsByUnitIDUC,
 	}
 
 	// config router

@@ -16,3 +16,10 @@ type UnitRepository interface {
 	GetAll() ([]entities.Unit, error)
 	DeleteByID(id uint) error
 }
+
+type PaymentRepository interface {
+	Save(payment *entities.Payment) error
+	GetByID(id uint) (*entities.Payment, error)
+	GetByUnitID(unitID uint) ([]entities.Payment, error)
+	DeleteByID(id uint) error
+}
