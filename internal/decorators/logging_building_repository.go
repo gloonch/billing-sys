@@ -3,7 +3,8 @@ package decorators
 import (
 	"billing-sys/internal/domain"
 	"billing-sys/internal/domain/entities"
-	"log"
+	"billing-sys/internal/utils"
+	"strconv"
 )
 
 type LoggingBuildingRepository struct {
@@ -11,56 +12,56 @@ type LoggingBuildingRepository struct {
 }
 
 func (l *LoggingBuildingRepository) GetByID(id uint) (*entities.Buildings, error) {
-	log.Printf("GetByID called with id: %d", id)
+	utils.LogInfo("Building", "GetByID called with id: "+strconv.Itoa(int(id)), "GetByID(id uint) (*entities.Buildings, error)")
 	building, err := l.Repo.GetByID(id)
 	if err != nil {
-		log.Printf("GetByID failed with error: %v", err)
+		utils.LogError("Building", "GetByID failed with error: "+err.Error(), "GetByID(id uint) (*entities.Buildings, error)")
 		return nil, err
 	}
-	log.Printf("GetByID successful: %+v", building)
+	utils.LogSuccess("Building", "GetByID successful", "GetByID(id uint) (*entities.Buildings, error)")
 	return building, nil
 }
 
 func (l *LoggingBuildingRepository) Save(building *entities.Buildings) error {
-	log.Printf("Save called with building: %+v", building)
+	utils.LogInfo("Building", "Save called", "Save(building *entities.Buildings) error")
 	err := l.Repo.Save(building)
 	if err != nil {
-		log.Printf("Save failed with error: %v", err)
+		utils.LogError("Building", "Save failed with error: "+err.Error(), "Save(building *entities.Buildings) error")
 		return err
 	}
-	log.Printf("Save successful")
+	utils.LogInfo("Building", "Save successful", "Save(building *entities.Buildings) error")
 	return nil
 }
 
 func (l *LoggingBuildingRepository) GetAll() ([]entities.Buildings, error) {
-	log.Println("GetAll called")
+	utils.LogInfo("Building", "GetAll called", "GetAll() ([]entities.Buildings, error)")
 	buildings, err := l.Repo.GetAll()
 	if err != nil {
-		log.Printf("GetAll failed with error: %v", err)
+		utils.LogError("Building", "GetAll failed with error: "+err.Error(), "GetAll() ([]entities.Buildings, error)")
 		return nil, err
 	}
-	log.Printf("GetAll successful: %d buildings fetched", len(buildings))
+	utils.LogInfo("Building", "GetAll successful", "GetAll() ([]entities.Buildings, error)")
 	return buildings, nil
 }
 
 func (l *LoggingBuildingRepository) DeleteByID(id uint) error {
-	log.Printf("DeleteByID called with id: %d", id)
+	utils.LogInfo("Building", "DeleteByID called with id: "+strconv.Itoa(int(id)), "DeleteByID(id uint) error")
 	err := l.Repo.DeleteByID(id)
 	if err != nil {
-		log.Printf("DeleteByID failed with error: %v", err)
+		utils.LogError("Building", "DeleteByID failed with error: "+err.Error(), "DeleteByID(id uint) error")
 		return err
 	}
-	log.Printf("DeleteByID successful")
+	utils.LogInfo("Building", "DeleteByID successful", "DeleteByID(id uint) error")
 	return nil
 }
 
 func (l *LoggingBuildingRepository) GetByBuildingID(buildingID uint) ([]entities.Unit, error) {
-	log.Printf("GetByBuildingID called with buildingID: %d", buildingID)
+	utils.LogInfo("Building", "GetByBuildingID called with buildingID: "+strconv.Itoa(int(buildingID)), "GetByBuildingID(buildingID uint) ([]entities.Unit, error)")
 	units, err := l.Repo.GetByBuildingID(buildingID)
 	if err != nil {
-		log.Printf("GetByBuildingID failed with error: %v", err)
+		utils.LogError("Building", "GetByBuildingID failed with error: "+err.Error(), "GetByBuildingID(buildingID uint) ([]entities.Unit, error)")
 		return nil, err
 	}
-	log.Printf("GetByBuildingID successful: %d units fetched", len(units))
+	utils.LogInfo("Building", "GetByBuildingID successful", "GetByBuildingID(buildingID uint) ([]entities.Unit, error)")
 	return units, nil
 }

@@ -3,7 +3,9 @@ package decorators
 import (
 	"billing-sys/internal/domain"
 	"billing-sys/internal/domain/entities"
+	"billing-sys/internal/utils"
 	"log"
+	"strconv"
 )
 
 type LoggingPaymentRepository struct {
@@ -11,45 +13,46 @@ type LoggingPaymentRepository struct {
 }
 
 func (l *LoggingPaymentRepository) Save(payment *entities.Payment) error {
-	log.Printf("Save called with payment: %+v", payment)
+	utils.LogInfo("Payment", "Save called with payment", "Save(payment *entities.Payment)")
 	err := l.Repo.Save(payment)
 	if err != nil {
-		log.Printf("Save failed with error: %v", err)
+		utils.LogError("Payment", "Save failed with error: "+err.Error(), "Save(payment *entities.Payment)")
 		return err
 	}
-	log.Printf("Save successful")
+	utils.LogSuccess("Payment", "Save successful", "Save(payment *entities.Payment)")
 	return nil
 }
 
 func (l *LoggingPaymentRepository) GetByID(id uint) (*entities.Payment, error) {
-	log.Printf("GetByID called with id: %d", id)
+	utils.LogInfo("Payment", "GetByID called with id: "+strconv.Itoa(int(id)), "GetByID(id uint) (*entities.Payment, error)")
 	payment, err := l.Repo.GetByID(id)
 	if err != nil {
+		utils.LogError("Payment", "GetByID failed with error: "+err.Error(), "GetByID(id uint) (*entities.Payment, error)")
 		log.Printf("GetByID failed with error: %v", err)
 		return nil, err
 	}
-	log.Printf("GetByID successful: %+v", payment)
+	utils.LogSuccess("Payment", "GetByID successful", "GetByID(id uint) (*entities.Payment, error)")
 	return payment, nil
 }
 
 func (l *LoggingPaymentRepository) GetByUnitID(unitID uint) ([]entities.Payment, error) {
-	log.Printf("GetByUnitID called with unitID: %d", unitID)
+	utils.LogInfo("Payment", "GetByUnitID called with unitID: "+strconv.Itoa(int(unitID)), "GetByUnitID(unitID uint) ([]entities.Payment, error)")
 	payments, err := l.Repo.GetByUnitID(unitID)
 	if err != nil {
-		log.Printf("GetByUnitID failed with error: %v", err)
+		utils.LogError("Payment", "GetByUnitID failed with error: "+err.Error(), "GetByUnitID(unitID uint) ([]entities.Payment, error)")
 		return nil, err
 	}
-	log.Printf("GetByUnitID successful: %d payments fetched", len(payments))
+	utils.LogInfo("Payment", "GetByUnitID successful payments fetched: "+string(len(payments)), "GetByUnitID(unitID uint) ([]entities.Payment, error)")
 	return payments, nil
 }
 
 func (l *LoggingPaymentRepository) DeleteByID(id uint) error {
-	log.Printf("DeleteByID called with id: %d", id)
+	utils.LogInfo("Payment", "DeleteByID called with id: "+strconv.Itoa(int(id)), "DeleteByID(id uint) error")
 	err := l.Repo.DeleteByID(id)
 	if err != nil {
-		log.Printf("DeleteByID failed with error: %v", err)
+		utils.LogError("Payment", "DeleteByID failed with error: "+err.Error(), "DeleteByID(id uint) error")
 		return err
 	}
-	log.Printf("DeleteByID successful")
+	utils.LogInfo("Payment", "DeleteByID successful", "DeleteByID(id uint) error")
 	return nil
 }

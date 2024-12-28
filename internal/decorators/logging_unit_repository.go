@@ -3,7 +3,8 @@ package decorators
 import (
 	"billing-sys/internal/domain"
 	"billing-sys/internal/domain/entities"
-	"log"
+	"billing-sys/internal/utils"
+	"strconv"
 )
 
 type LoggingUnitRepository struct {
@@ -11,45 +12,46 @@ type LoggingUnitRepository struct {
 }
 
 func (l *LoggingUnitRepository) GetByID(id uint) (*entities.Unit, error) {
-	log.Printf("GetByID called with id: %d", id)
+	utils.LogInfo("Unit", "GetByID called with id: "+strconv.Itoa(int(id)), "GetByID(id uint) (*entities.Unit, error)")
 	unit, err := l.Repo.GetByID(id)
 	if err != nil {
-		log.Printf("GetByID failed with error: %v", err)
+		utils.LogError("Unit", "GetByID failed with error: "+err.Error(), "GetByID(id uint) (*entities.Unit, error)")
 		return nil, err
 	}
-	log.Printf("GetByID successful: %+v", unit)
+	utils.LogSuccess("Unit", "GetByID successful", "GetByID(id uint) (*entities.Unit, error)")
 	return unit, nil
 }
 
 func (l *LoggingUnitRepository) Save(unit *entities.Unit) error {
-	log.Printf("Save called with unit: %+v", unit)
+	utils.LogInfo("Unit", "Save called with unit: ", "Save(unit *entities.Unit) error")
 	err := l.Repo.Save(unit)
 	if err != nil {
-		log.Printf("Save failed with error: %v", err)
+		utils.LogError("Unit", "Save failed with error: "+err.Error(), "Save(unit *entities.Unit) error")
 		return err
 	}
-	log.Printf("Save successful")
+	utils.LogSuccess("Unit", "Save successful", "Save(unit *entities.Unit) error")
 	return nil
 }
 
 func (l *LoggingUnitRepository) GetAll() ([]entities.Unit, error) {
-	log.Println("GetAll called")
+	utils.LogInfo("Unit", "GetAll called", "GetAll() ([]entities.Unit, error)")
 	units, err := l.Repo.GetAll()
 	if err != nil {
-		log.Printf("GetAll failed with error: %v", err)
+		utils.LogError("Unit", "GetAll failed with error: "+err.Error(), "GetAll() ([]entities.Unit, error)")
 		return nil, err
 	}
-	log.Printf("GetAll successful: %d units fetched", len(units))
+	utils.LogSuccess("Unit", "GetAll successful"+strconv.Itoa(len(units)), "GetAll() ([]entities.Unit, error)")
 	return units, nil
 }
 
 func (l *LoggingUnitRepository) DeleteByID(id uint) error {
-	log.Printf("DeleteByID called with id: %d", id)
+	utils.LogInfo("Unit", "DeleteByID called with id: "+strconv.Itoa(int(id)), "DeleteByID(id uint) error")
 	err := l.Repo.DeleteByID(id)
 	if err != nil {
-		log.Printf("DeleteByID failed with error: %v", err)
+		utils.LogError("Unit", "DeleteByID failed with error: "+err.Error(), "DeleteByID(id uint) error")
 		return err
 	}
-	log.Printf("DeleteByID successful")
+	utils.LogSuccess("Unit", "DeleteByID successful", "DeleteByID(id uint) error")
+
 	return nil
 }
