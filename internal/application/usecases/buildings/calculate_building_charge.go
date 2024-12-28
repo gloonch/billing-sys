@@ -3,6 +3,7 @@ package buildings
 import (
 	"billing-sys/internal/domain"
 	"billing-sys/internal/domain/services"
+	"billing-sys/internal/domain/strategies"
 )
 
 type CalculateBuildingChargeUseCase struct {
@@ -11,7 +12,10 @@ type CalculateBuildingChargeUseCase struct {
 	ChargeCalculator *services.ChargeCalculator
 }
 
-func (uc *CalculateBuildingChargeUseCase) Execute(buildingID uint) (map[uint]float64, error) {
+func (uc *CalculateBuildingChargeUseCase) Execute(buildingID uint, strategy strategies.ChargeCalculationStrategy) (map[uint]float64, error) {
+
+	uc.ChargeCalculator.Strategy = strategy
+
 	building, err := uc.BuildingRepo.GetByID(buildingID)
 	if err != nil {
 		return nil, err

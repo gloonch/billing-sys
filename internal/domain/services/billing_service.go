@@ -1,11 +1,11 @@
 package services
 
+import "billing-sys/internal/domain/strategies"
+
 type ChargeCalculator struct {
-	PerOccupantCharge float64
+	Strategy strategies.ChargeCalculationStrategy
 }
 
 func (c *ChargeCalculator) Calculate(unitArea, totalArea, baseCharge float64, occupantsCount int, sharedExpenses float64) float64 {
-	unitCharge := (unitArea / totalArea) * baseCharge
-	extraCharge := float64(occupantsCount) * c.PerOccupantCharge
-	return unitCharge + extraCharge + sharedExpenses
+	return c.Strategy.Calculate(unitArea, totalArea, baseCharge, occupantsCount, sharedExpenses)
 }

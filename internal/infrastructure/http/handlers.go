@@ -5,6 +5,7 @@ import (
 	"billing-sys/internal/application/usecases/buildings"
 	"billing-sys/internal/application/usecases/payments"
 	"billing-sys/internal/application/usecases/units"
+	"billing-sys/internal/domain/strategies"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -196,7 +197,7 @@ func (h *Handlers) CalculateBuildingChargeHandler(w http.ResponseWriter, r *http
 	path := r.URL.Path
 	segments := strings.Split(path, "/")
 
-	if len(segments) < 3 || segments[1] != "buildings" {
+	if len(segments) < 4 || segments[1] != "buildings" {
 		http.Error(w, "Invalid URL", http.StatusBadRequest)
 		return
 	}
@@ -208,7 +209,31 @@ func (h *Handlers) CalculateBuildingChargeHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	charges, err := h.CalculateBuildingChargeUC.Execute(uint(buildingID))
+	// pick strategy of charge calculation
+
+	var strategy strategies.ChargeCalculationStrategy
+	input_startegy, strgErr := strconv.Atoi(segments[4])
+	if strgErr != nil {
+		http.Error(w, "Invalid Strategy ", http.StatusBadRequest)
+
+		return
+	}
+	if input_startegy > 3 || input_startegy < 0 {
+		http.Error(w, "Invalid Strategy ", http.StatusBadRequest)
+
+		return
+	}
+	if input_startegy == 1 {
+		strategy = &strategies.AreaBasedStrategy{}
+	}
+	if input_startegy == 2 {
+		strategy = &strategies.OccupantBasedStrategy{}
+	}
+	if input_startegy == 3 {
+		strategy = &strategies.CombinedStrategy{}
+	}
+
+	charges, err := h.CalculateBuildingChargeUC.Execute(uint(buildingID), strategy)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
