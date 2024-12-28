@@ -4,6 +4,7 @@ import (
 	"billing-sys/internal/application/usecases/buildings"
 	"billing-sys/internal/application/usecases/payments"
 	"billing-sys/internal/application/usecases/units"
+	"billing-sys/internal/decorators"
 	"billing-sys/internal/domain/services"
 	"billing-sys/internal/infrastructure/database"
 	mHttp "billing-sys/internal/infrastructure/http"
@@ -33,60 +34,67 @@ func main() {
 	defer db.Close()
 	log.Println("Connected to database")
 
-	// get repository
+	// Original Repositories
 	buildingRepo := repository.NewPgBuildingRepository(db)
 	unitRepo := repository.NewPgUnitRepository(db)
 	paymentRepo := repository.NewPgPaymentRepository(db)
+
+	// Logging Decorators
+	loggingBuildingRepo := &decorators.LoggingBuildingRepository{Repo: buildingRepo}
+	loggingUnitRepo := &decorators.LoggingUnitRepository{Repo: unitRepo}
+	loggingPaymentRepo := &decorators.LoggingPaymentRepository{Repo: paymentRepo}
+
+	// Charge Calculator
 	chargeCalculator := services.ChargeCalculator{}
 
 	// get buildings use cases
 	createBuildingUC := &buildings.CreateBuildingUseCase{
-		BuildingRepo: buildingRepo,
+		BuildingRepo: loggingBuildingRepo,
 	}
 	getBuildingUC := &buildings.GetBuildingUseCase{
-		BuildingRepo: buildingRepo,
+		BuildingRepo: loggingBuildingRepo,
 	}
 	updateBuildingUC := &buildings.UpdateBuildingUseCase{
-		BuildingRepo: buildingRepo,
+		BuildingRepo: loggingBuildingRepo,
 	}
 	listBuildingUC := &buildings.ListAllBuildingUseCase{
-		BuildingRepo: buildingRepo,
+		BuildingRepo: loggingBuildingRepo,
 	}
 	deleteBuildingUC := &buildings.DeleteBuildingUseCase{
-		BuildingRepo: buildingRepo,
+		BuildingRepo: loggingBuildingRepo,
 	}
 	calculateBuildingChargeUC := &buildings.CalculateBuildingChargeUseCase{
-		UnitRepo:         unitRepo,
-		BuildingRepo:     buildingRepo,
+		UnitRepo:         loggingUnitRepo,
+		BuildingRepo:     loggingBuildingRepo,
 		ChargeCalculator: &chargeCalculator,
 	}
 
-	// get unit use cases
+	// Unit Use Cases
 	createUnitUC := &units.CreateUnitUseCase{
-		UnitRepo: unitRepo,
+		UnitRepo: loggingUnitRepo,
 	}
 	getUnitUC := &units.GetUnitUseCase{
-		UnitRepo: unitRepo,
+		UnitRepo: loggingUnitRepo,
 	}
 	listUnitUC := &units.ListAllUnitUseCase{
-		UnitRepo: unitRepo,
+		UnitRepo: loggingUnitRepo,
 	}
 	updateUnitUC := &units.UpdateUnitUseCase{
-		UnitRepo: unitRepo,
+		UnitRepo: loggingUnitRepo,
 	}
 	deleteUnitUC := &units.DeleteUnitUseCase{
-		UnitRepo: unitRepo,
+		UnitRepo: loggingUnitRepo,
 	}
 
 	// get unit use cases
 	createPaymentUC := &payments.CreatePaymentUseCase{
-		PaymentRepo: paymentRepo,
+		PaymentRepo: loggingPaymentRepo,
 	}
 	deletePaymentUC := &payments.DeletePaymentUseCase{
-		PaymentRepo: paymentRepo,
+		PaymentRepo: loggingPaymentRepo,
 	}
 	listPaymentsByUnitIDUC := &payments.ListPaymentsByUnitIDUseCase{
-		PaymentRepo: paymentRepo,
+		PaymentRepo: loggingPaymentRepo,
 	}
 
 	// handlers
