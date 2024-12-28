@@ -16,6 +16,24 @@ services:
     networks:
       - app_network
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_app_container
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: billingsys
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - app_network
+
 volumes:
   postgres_data:
 
