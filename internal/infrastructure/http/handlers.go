@@ -398,7 +398,7 @@ func (h *Handlers) CreatePaymentHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *Handlers) ListPaymentsByUnitHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -410,7 +410,7 @@ func (h *Handlers) ListPaymentsByUnitHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	idStr := segments[2]
+	idStr := segments[3]
 	unitID, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid ID", http.StatusBadRequest)

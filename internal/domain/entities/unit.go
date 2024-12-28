@@ -7,5 +7,5 @@ type Unit struct {
 	Area           float64
 	OccupantsCount int
 	//Residents     []Resident
-	//Payments      []Payment
+	Payments []Payment
 }

@@ -16,23 +16,68 @@ func NewPgUnitRepository(db *sql.DB) domain.UnitRepository {
 }
 
 func (r *PgUnitRepository) GetAll() ([]entities.Unit, error) {
-	// if not specified, BuildingID will get wrong value through the Scan method
-	rows, err := r.db.Query("SELECT id, building_id, unit_number, area, occupants_count FROM units")
+	query := `
+        SELECT 
+            u.id AS unit_id, 
+            u.building_id, 
+            u.unit_number, 
+            u.area, 
+            u.occupants_count, 
+            p.id AS payment_id, 
+            p.amount, 
+            p.payment_date, 
+            p.description
+        FROM units u
+        LEFT JOIN payments p ON u.id = p.unit_id
+    `
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var units []entities.Unit
+	unitMap := make(map[uint]*entities.Unit)
+
 	for rows.Next() {
-		var u entities.Unit
-		if err := rows.Scan(&u.ID, &u.BuildingID, &u.UnitNumber, &u.Area, &u.OccupantsCount); err != nil {
+		var (
+			unitID      uint
+			paymentID   sql.NullInt64
+			amount      sql.NullFloat64
+			paymentDate sql.NullTime
+			description sql.NullString
+			unit        entities.Unit
+		)
+
+		err := rows.Scan(
+			&unitID, &unit.BuildingID, &unit.UnitNumber, &unit.Area, &unit.OccupantsCount,
+			&paymentID, &amount, &paymentDate, &description,
+		)
+		if err != nil {
 			return nil, err
 		}
-		units = append(units, u)
+
+		// بررسی اینکه آیا این واحد قبلاً اضافه شده است یا خیر
+		if _, exists := unitMap[unitID]; !exists {
+			unit.ID = unitID
+			unit.Payments = []entities.Payment{}
+			unitMap[unitID] = &unit
+		}
+
+		// اگر پرداخت وجود دارد، آن را اضافه کنید
+		if paymentID.Valid {
+			unitMap[unitID].Payments = append(unitMap[unitID].Payments, entities.Payment{
+				ID:          uint(paymentID.Int64),
+				UnitID:      unitID,
+				Amount:      amount.Float64,
+				PaymentDate: paymentDate.Time,
+				Description: description.String,
+			})
+		}
 	}
-	if err := rows.Err(); err != nil {
-		return nil, err
+
+	var units []entities.Unit
+	for _, unit := range unitMap {
+		units = append(units, *unit)
 	}
 
 	return units, nil
