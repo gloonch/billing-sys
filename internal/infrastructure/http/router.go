@@ -1,12 +1,18 @@
 package http
 
-import "net/http"
+import (
+	"billing-sys/internal/infrastructure/metrics"
+	"net/http"
+)
 
 func NewRouter(handlers *Handlers) http.Handler {
 	r := http.NewServeMux()
 
-	// use middleware here
-	// ...
+	metrics.Init()
+	r.Handle("/", metrics.MetricsMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello, world!"))
+	})))
+	r.Handle("/metrics", metrics.MetricsHandler())
 
 	r.HandleFunc("GET /buildings/{id}", handlers.GetBuildingHandler)
 	r.HandleFunc("POST /buildings", handlers.CreateBuildingHandler)
