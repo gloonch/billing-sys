@@ -16,7 +16,7 @@ import (
 func main() {
 
 	cfg := database.DBConfig{
-		Host:     "localhost",
+		Host:     "postgres",
 		Port:     5432,
 		Username: "postgres",
 		Password: "1234",
