@@ -1,0 +1,654 @@
+definitions:
+  dto.CreateBuildingInput:
+    properties:
+      address:
+        example: 123 Main St
+        type: string
+      name:
+        example: Building 1
+        type: string
+      total_area:
+        example: 10
+        type: number
+      total_units:
+        example: 1
+        type: integer
+    type: object
+  dto.CreateBuildingOutput:
+    properties:
+      address:
+        example: 123 Main St
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Building 1
+        type: string
+      total_area:
+        example: 10
+        type: number
+      total_units:
+        example: 1
+        type: integer
+    type: object
+  dto.CreatePaymentInput:
+    properties:
+      amount:
+        example: 10
+        type: number
+      description:
+        example: some description here
+        type: string
+      payment_date:
+        example: "2020-01-01"
+        type: string
+      unit_id:
+        example: 1
+        type: integer
+    required:
+    - amount
+    - description
+    - payment_date
+    - unit_id
+    type: object
+  dto.CreatePaymentOutput:
+    properties:
+      amount:
+        example: 10
+        type: number
+      description:
+        example: some description here
+        type: string
+      id:
+        type: integer
+      payment_date:
+        example: "2020-01-01"
+        type: string
+      unit_id:
+        example: 1
+        type: integer
+    required:
+    - amount
+    - description
+    - payment_date
+    - unit_id
+    type: object
+  dto.CreateUnitInput:
+    properties:
+      area:
+        example: 100
+        type: number
+      building_id:
+        example: 0
+        type: integer
+      occupants_count:
+        example: 10
+        type: integer
+      unit_number:
+        example: "100"
+        type: string
+    type: object
+  dto.CreateUnitOutput:
+    properties:
+      area:
+        type: number
+      building_id:
+        type: integer
+      id:
+        type: integer
+      occupants_count:
+        type: integer
+      unit_number:
+        type: string
+    type: object
+  dto.GetBuildingOutput:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      total_area:
+        type: number
+      total_units:
+        type: integer
+    type: object
+  dto.GetUnitOutput:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      total_area:
+        type: number
+      total_units:
+        type: integer
+    type: object
+  dto.UpdateBuildingInput:
+    properties:
+      address:
+        example: 1st Street
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Building
+        type: string
+      total_area:
+        example: 20.2
+        type: number
+      total_units:
+        example: 22
+        type: integer
+    required:
+    - address
+    - id
+    - name
+    - total_area
+    - total_units
+    type: object
+  dto.UpdateBuildingOutput:
+    properties:
+      address:
+        example: 1st Street
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Building
+        type: string
+      total_area:
+        example: 20.2
+        type: number
+      total_units:
+        example: 22
+        type: integer
+    required:
+    - address
+    - id
+    - name
+    - total_area
+    - total_units
+    type: object
+info:
+  contact: {}
+paths:
+  /buildings:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all buildings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GetBuildingOutput'
+            type: array
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List all buildings
+      tags:
+      - buildings
+    post:
+      consumes:
+      - application/json
+      description: Adds a new building to the system
+      parameters:
+      - description: Building data
+        in: body
+        name: building
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateBuildingInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateBuildingOutput'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new building
+      tags:
+      - buildings
+  /buildings/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a building by its ID
+      parameters:
+      - description: Building ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Building deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a building
+      tags:
+      - buildings
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of a building using its unique ID
+      parameters:
+      - description: Building ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetBuildingOutput'
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get details of a specific building
+      tags:
+      - buildings
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of a specific building by its ID
+      parameters:
+      - description: Building ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated building data
+        in: body
+        name: building
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateBuildingInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdateBuildingOutput'
+        "400":
+          description: Invalid URL, ID, or input data
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a building's details
+      tags:
+      - buildings
+  /buildings/{id}/charges/{strategy}:
+    get:
+      consumes:
+      - application/json
+      description: Calculates the charges for a building using a specified strategy
+      parameters:
+      - description: Building ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 'Charge calculation strategy: 1 (Area-Based), 2 (Occupant-Based),
+          3 (Combined)'
+        in: path
+        name: strategy
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Map of unit IDs to calculated charges
+          schema:
+            additionalProperties:
+              type: number
+            type: object
+        "400":
+          description: Invalid URL, ID, or strategy
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Calculate charges for a building
+      tags:
+      - buildings
+  /payments:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new payment to the system
+      parameters:
+      - description: Payment data
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreatePaymentInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreatePaymentOutput'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new payment
+      tags:
+      - payments
+  /payments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a payment by its ID
+      parameters:
+      - description: Payment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a payment
+      tags:
+      - payments
+  /payments/unit/{unit_id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all payments associated with a specific unit
+        ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: unit_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.CreatePaymentOutput'
+            type: array
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List payments for a specific unit
+      tags:
+      - payments
+  /units:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of all units in the system
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GetUnitOutput'
+            type: array
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve all units
+      tags:
+      - units
+    post:
+      consumes:
+      - application/json
+      description: Adds a new unit to the system
+      parameters:
+      - description: Unit data
+        in: body
+        name: unit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUnitInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateUnitOutput'
+        "400":
+          description: Invalid input
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a new unit
+      tags:
+      - units
+  /units/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a unit by its ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Unit deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a unit
+      tags:
+      - units
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the details of a unit by its unique ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetUnitOutput'
+        "400":
+          description: Invalid URL or ID
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Retrieve a specific unit
+      tags:
+      - units
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of a specific unit by its ID
+      parameters:
+      - description: Unit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated unit data
+        in: body
+        name: unit
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUnitInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetUnitOutput'
+        "400":
+          description: Invalid URL, ID, or input data
+          schema:
+            type: string
+        "405":
+          description: Method Not Allowed
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a unit
+      tags:
+      - units
+swagger: "2.0"

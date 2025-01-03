@@ -2,17 +2,26 @@ package http
 
 import (
 	"billing-sys/internal/infrastructure/metrics"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"net/http"
 )
 
 func NewRouter(handlers *Handlers) http.Handler {
 	r := http.NewServeMux()
 
+	// Prometheus
 	metrics.Init()
 	r.Handle("/", metrics.MetricsMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello, world!"))
 	})))
 	r.Handle("/metrics", metrics.MetricsHandler())
+
+	// Swagger
+	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+	r.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	r.HandleFunc("GET /buildings/{id}", handlers.GetBuildingHandler)
 	r.HandleFunc("POST /buildings", handlers.CreateBuildingHandler)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "billing-sys/docs"
 	"billing-sys/internal/application/usecases/buildings"
 	"billing-sys/internal/application/usecases/payments"
 	"billing-sys/internal/application/usecases/units"

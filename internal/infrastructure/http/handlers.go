@@ -34,6 +34,18 @@ type Handlers struct {
 	ListPaymentsByUnitIDUC *payments.ListPaymentsByUnitIDUseCase
 }
 
+// CreateBuildingHandler godoc
+// @Summary Create a new building
+// @Description Adds a new building to the system
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Param building body dto.CreateBuildingInput true "Building data"
+// @Success 201 {object} dto.CreateBuildingOutput
+// @Failure 400 {string} string "Invalid input"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings [post]
 func (h *Handlers) CreateBuildingHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
@@ -60,6 +72,18 @@ func (h *Handlers) CreateBuildingHandler(w http.ResponseWriter, r *http.Request)
 	json.NewEncoder(w).Encode(result)
 }
 
+// GetBuildingHandler godoc
+// @Summary Get details of a specific building
+// @Description Retrieves details of a building using its unique ID
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Param id path int true "Building ID"
+// @Success 200 {object} dto.GetBuildingOutput
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings/{id} [get]
 func (h *Handlers) GetBuildingHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
@@ -95,6 +119,16 @@ func (h *Handlers) GetBuildingHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+// ListBuildingHandler godoc
+// @Summary List all buildings
+// @Description Retrieves a list of all buildings
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.GetBuildingOutput
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings [get]
 func (h *Handlers) ListBuildingHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
@@ -114,6 +148,19 @@ func (h *Handlers) ListBuildingHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+// UpdateBuildingHandler godoc
+// @Summary Update a building's details
+// @Description Updates the details of a specific building by its ID
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Param id path int true "Building ID"
+// @Param building body dto.UpdateBuildingInput true "Updated building data"
+// @Success 200 {object} dto.UpdateBuildingOutput
+// @Failure 400 {string} string "Invalid URL, ID, or input data"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings/{id} [put]
 func (h *Handlers) UpdateBuildingHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPut {
@@ -156,6 +203,18 @@ func (h *Handlers) UpdateBuildingHandler(w http.ResponseWriter, r *http.Request)
 	json.NewEncoder(w).Encode(result)
 }
 
+// DeleteBuildingHandler godoc
+// @Summary Delete a building
+// @Description Deletes a building by its ID
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Param id path int true "Building ID"
+// @Success 200 {object} map[string]string "Building deleted successfully"
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings/{id} [delete]
 func (h *Handlers) DeleteBuildingHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -189,6 +248,19 @@ func (h *Handlers) DeleteBuildingHandler(w http.ResponseWriter, r *http.Request)
 	})
 }
 
+// CalculateBuildingChargeHandler godoc
+// @Summary Calculate charges for a building
+// @Description Calculates the charges for a building using a specified strategy
+// @Tags buildings
+// @Accept json
+// @Produce json
+// @Param id path int true "Building ID"
+// @Param strategy path int true "Charge calculation strategy: 1 (Area-Based), 2 (Occupant-Based), 3 (Combined)"
+// @Success 200 {object} map[uint]float64 "Map of unit IDs to calculated charges"
+// @Failure 400 {string} string "Invalid URL, ID, or strategy"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /buildings/{id}/charges/{strategy} [get]
 func (h *Handlers) CalculateBuildingChargeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -246,6 +318,18 @@ func (h *Handlers) CalculateBuildingChargeHandler(w http.ResponseWriter, r *http
 
 // unit handlers TODO: should i separate these handlers into EntityHandler ?
 
+// CreateUnitHandler godoc
+// @Summary Create a new unit
+// @Description Adds a new unit to the system
+// @Tags units
+// @Accept json
+// @Produce json
+// @Param unit body dto.CreateUnitInput true "Unit data"
+// @Success 201 {object} dto.CreateUnitOutput
+// @Failure 400 {string} string "Invalid input"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /units [post]
 func (h *Handlers) CreateUnitHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
@@ -273,6 +357,18 @@ func (h *Handlers) CreateUnitHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// GetUnitHandler godoc
+// @Summary Retrieve a specific unit
+// @Description Retrieves the details of a unit by its unique ID
+// @Tags units
+// @Accept json
+// @Produce json
+// @Param id path int true "Unit ID"
+// @Success 200 {object} dto.GetUnitOutput
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /units/{id} [get]
 func (h *Handlers) GetUnitHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -306,6 +402,16 @@ func (h *Handlers) GetUnitHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+// ListUnitHandler godoc
+// @Summary Retrieve all units
+// @Description Retrieves a list of all units in the system
+// @Tags units
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.GetUnitOutput
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /units [get]
 func (h *Handlers) ListUnitHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodGet {
@@ -325,6 +431,19 @@ func (h *Handlers) ListUnitHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+// UpdateUnitHandler godoc
+// @Summary Update a unit
+// @Description Updates the details of a specific unit by its ID
+// @Tags units
+// @Accept json
+// @Produce json
+// @Param id path int true "Unit ID"
+// @Param unit body dto.CreateUnitInput true "Updated unit data"
+// @Success 200 {object} dto.GetUnitOutput
+// @Failure 400 {string} string "Invalid URL, ID, or input data"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /units/{id} [put]
 func (h *Handlers) UpdateUnitHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPut {
@@ -366,6 +485,18 @@ func (h *Handlers) UpdateUnitHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
+// DeleteUnitHandler godoc
+// @Summary Delete a unit
+// @Description Deletes a unit by its ID
+// @Tags units
+// @Accept json
+// @Produce json
+// @Param id path int true "Unit ID"
+// @Success 200 {object} map[string]string "Unit deleted successfully"
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /units/{id} [delete]
 func (h *Handlers) DeleteUnitHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -400,6 +531,18 @@ func (h *Handlers) DeleteUnitHandler(w http.ResponseWriter, r *http.Request) {
 
 // payment handlers
 
+// CreatePaymentHandler godoc
+// @Summary Create a new payment
+// @Description Adds a new payment to the system
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param payment body dto.CreatePaymentInput true "Payment data"
+// @Success 201 {object} dto.CreatePaymentOutput
+// @Failure 400 {string} string "Invalid input"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /payments [post]
 func (h *Handlers) CreatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -422,6 +565,18 @@ func (h *Handlers) CreatePaymentHandler(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(result)
 }
 
+// ListPaymentsByUnitHandler godoc
+// @Summary List payments for a specific unit
+// @Description Retrieves a list of all payments associated with a specific unit ID
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param unit_id path int true "Unit ID"
+// @Success 200 {array} dto.CreatePaymentOutput
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /payments/unit/{unit_id} [get]
 func (h *Handlers) ListPaymentsByUnitHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -452,6 +607,18 @@ func (h *Handlers) ListPaymentsByUnitHandler(w http.ResponseWriter, r *http.Requ
 	json.NewEncoder(w).Encode(results)
 }
 
+// DeletePaymentHandler godoc
+// @Summary Delete a payment
+// @Description Deletes a payment by its ID
+// @Tags payments
+// @Accept json
+// @Produce json
+// @Param id path int true "Payment ID"
+// @Success 200 {object} map[string]string "Payment deleted successfully"
+// @Failure 400 {string} string "Invalid URL or ID"
+// @Failure 405 {string} string "Method Not Allowed"
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /payments/{id} [delete]
 func (h *Handlers) DeletePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)

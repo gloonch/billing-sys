@@ -1,9 +1,9 @@
 package dto
 
 type GetBuildingOutput struct {
-	ID         uint
-	Name       string
-	Address    string
-	TotalUnits int
-	TotalArea  float64
+	ID         uint    `json:"id"`
+	Name       string  `json:"name"`
+	Address    string  `json:"address"`
+	TotalUnits int     `json:"total_units"`
+	TotalArea  float64 `json:"total_area"`
 }
