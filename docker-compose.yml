@@ -27,7 +27,12 @@ services:
         DB_PASSWORD: password
         DB_NAME: billingsys
       ports:
-        - "8000:8000"
+        - "9000:9000"
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+        interval: 10s
+        timeout: 5s
+        retries: 3
       depends_on:
         postgres:
           condition: service_healthy
@@ -54,8 +59,44 @@ services:
       networks:
         - app_network
 
+    jenkins:
+      image: jenkins-docker
+      container_name: jenkins
+      user: root
+      ports:
+        - "8080:8080"
+      volumes:
+        - jenkins_home:/var/jenkins_home
+        - /var/run/docker.sock:/var/run/docker.sock
+      networks:
+        - app_network
+
+
+
+#    jenkins:
+#      image: jenkins/jenkins:lts
+#      container_name: jenkins
+#      user: root
+#      ports:
+#        - "8080:8080"
+#      volumes:
+#        - jenkins_home:/var/jenkins_home
+#        - /var/run/docker.sock:/var/run/docker.sock
+#        - ./jenkins/init.groovy.d:/usr/share/jenkins/ref/init.groovy.d:rw
+##        - ./Jenkinsfile:/var/jenkins_home/workspace/GoAppPipeline/Jenkinsfile:rw # executes scripts from local Jenkinsfile to create the pipeline
+#      networks:
+#        - app_network
+#      environment:
+#        - JAVA_OPTS=-Djenkins.install.runSetupWizard=false # Skip initial setup wizard
+##      depends_on:
+##        app:
+##          condition: service_healthy
+##      command: >
+##        /bin/sh -c "sleep 20 && /usr/bin/tini -- /usr/local/bin/jenkins.sh"
+
 volumes:
   postgres_data:
+  jenkins_home:
 
 networks:
   app_network:

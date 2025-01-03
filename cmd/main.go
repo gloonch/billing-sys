@@ -121,7 +121,7 @@ func main() {
 	// config router
 	router := mHttp.NewRouter(handlers)
 
-	port := ":8000"
+	port := ":9000"
 	log.Println("Starting server on port ", port)
 	if err := http.ListenAndServe(port, router); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
